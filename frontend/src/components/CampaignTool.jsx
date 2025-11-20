@@ -6,6 +6,9 @@ const containerStyle = { maxWidth: '800px', margin: '20px auto', fontFamily: 'sa
 const creditStyle = { padding: '15px', background: '#e0f7fa', border: '1px solid #b2ebf2', marginBottom: '20px', textAlign: 'center', borderRadius: '5px' };
 const tableStyle = { width: '100%', borderCollapse: 'collapse', marginTop: '20px' };
 
+// Use dynamic BASE_URL for production vs local
+const BASE_URL = process.env.NODE_ENV === "production" ? "" : "http://localhost:5000";
+
 function CampaignTool() {
     const [token, setToken] = useState(localStorage.getItem('campaignToken') || '');
     const [credits, setCredits] = useState('...');
@@ -23,11 +26,11 @@ function CampaignTool() {
 
         try {
             // Fetch credits
-            const creditRes = await axios.get(`http://localhost:5000/api/credits?token=${token}`);
+            const creditRes = await axios.get(`${BASE_URL}/api/credits?token=${token}`);
             setCredits(creditRes.data.remainingCredits);
 
             // Fetch campaigns
-            const campaignRes = await axios.get(`http://localhost:5000/api/campaigns?token=${token}`);
+            const campaignRes = await axios.get(`${BASE_URL}/api/campaigns?token=${token}`);
             setCampaigns(campaignRes.data.campaigns || []);
             
             setError(''); 
@@ -61,7 +64,7 @@ function CampaignTool() {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/api/submit', { 
+            const res = await axios.post(`${BASE_URL}/api/submit`, { 
                 campaignName, 
                 urls, 
                 clientToken: token 
